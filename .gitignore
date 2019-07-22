@@ -1,0 +1,4 @@
+settings.json
+*.pyc
+migrations
+__pycache__

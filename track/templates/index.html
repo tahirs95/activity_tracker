@@ -1,0 +1,16 @@
+<h1>Weekly</h1>
+{{week_dict}}
+<br>
+<br>
+<h1>Monthly</h1>
+{% for key,parent_dict_item in month_dict.items %}
+    {% for key2, nested_value in parent_dict_item.items %}
+        {{key2}}:{{nested_value}}
+        <br>
+    {% endfor %}
+    <br>
+{% endfor %}
+
+<br>
+<h1>Daily</h1>
+{{daily_dict}}
