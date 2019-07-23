@@ -23,7 +23,6 @@ def get_records(request, *args, **kwargs):
     custom_date = datetime(y, m, d)
 
     custom_date_activities = ActivityTracker.objects.filter(date=custom_date)
-    print(custom_date_activities)
 
     daily_activities = ActivityTracker.objects.filter(date=today)
     weekly_activities = ActivityTracker.objects.filter(date__gte=datetime.date(week))
@@ -34,7 +33,8 @@ def get_records(request, *args, **kwargs):
             "date":daily_activity.date.strftime("%d %b %Y"),
             "start_time":daily_activity.start_time.strftime("%H:%M"),
             "end_time":daily_activity.end_time.strftime("%H:%M"),
-            "activity":daily_activity.activity.name
+            "activity":daily_activity.activity.name,
+            "elapsed_time":daily_activity.elapsed_time
             }
         
     for i, weekly_activity in enumerate(weekly_activities):
@@ -42,7 +42,9 @@ def get_records(request, *args, **kwargs):
             "date":weekly_activity.date.strftime("%d %b %Y"),
             "start_time":weekly_activity.start_time.strftime("%H:%M"),
             "end_time":weekly_activity.end_time.strftime("%H:%M"),
-            "activity":weekly_activity.activity.name
+            "activity":weekly_activity.activity.name,
+            "elapsed_time":weekly_activity.elapsed_time
+
             }
     
     for i, monthly_activity in enumerate(monthly_activities):
@@ -50,7 +52,9 @@ def get_records(request, *args, **kwargs):
             "date":monthly_activity.date.strftime("%d %b %Y"),
             "start_time":monthly_activity.start_time.strftime("%H:%M"),
             "end_time":monthly_activity.end_time.strftime("%H:%M"),
-            "activity":monthly_activity.activity.name
+            "activity":monthly_activity.activity.name,
+            "elapsed_time":monthly_activity.elapsed_time
+
             }
 
     return JsonResponse({"daily_dict":daily_activities_dict, "week_dict":weekly_activities_dict, "month_dict":monthly_activities_dict})
