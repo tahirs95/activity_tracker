@@ -13,5 +13,6 @@ class ActivityTracker(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     activity = models.ForeignKey('Activity', on_delete=models.CASCADE)
+    elapsed_time = models.FloatField()
     def __str__(self):
         return self.activity.name  + '/' + str(self.date) + '/' + str(self.start_time) + '/' + str(self.end_time)

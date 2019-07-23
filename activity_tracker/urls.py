@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from track.views import book
+from track.views import get_records, add_record
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', book)
+    path('', get_records),
+    path('add/', add_record)
+
 ]
