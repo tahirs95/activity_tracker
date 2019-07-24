@@ -136,12 +136,43 @@ def category(request, *args, **kwargs):
     categories = Activity.objects.all()
     for i, category in enumerate(categories):
         categories_dict[i] = {
+            "id":category.id,
             "name":category.name,
             "bar_color":category.bar_color,
             "group_num":category.group_num
             }
 
     return JsonResponse({"categories_dict":categories_dict})
+
+
+@csrf_exempt
+def edit_category(request):
+    request_data = json.loads(request.body)
+    # loading request data
+    _id = request_data["id"]
+    name = request_data["name"]
+    bar_color = request_data["bar_color"]
+    group_num = request_data["group_num"]
+
+    activity = Activity.objects.get(pk=_id)
+    activity.name = name
+    activity.bar_color = bar_color
+    activity.group_num = group_num
+    activity.save()
+
+    return JsonResponse({"status":"True", "message":"Category has been edited."})
+
+@csrf_exempt
+def delete_category(request):
+    request_data = json.loads(request.body)
+    # loading request data
+    _id = request_data["id"]
+
+    activity = Activity.objects.get(pk=_id)
+    activity.delete()
+
+    return JsonResponse({"status":"True", "message":"Category has been deleted."})
+
 
 
 
