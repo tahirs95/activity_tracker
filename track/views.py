@@ -25,7 +25,7 @@ def get_records(request, *args, **kwargs):
 
     if "date" in request_data:
         date = request_data["date"]
-        m, d, y = map(int, date.split(','))
+        m, d, y = map(int, date.split('/'))
         custom_date = datetime(y, m, d)
         custom_date_activities = ActivityTracker.objects.filter(date=custom_date)
 
@@ -97,7 +97,7 @@ def add_record(request):
     category_group_num = request_data["category_group_num"]
 
     # date_entry = "2019,7,22"
-    m, d, y = map(int, date.split(','))
+    m, d, y = map(int, date.split('/'))
     custom_date = datetime(y, m, d)
 
     row = ActivityTracker(
