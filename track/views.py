@@ -14,27 +14,46 @@ today = date.today()
 
 # dateStr = today.strftime("%d %b %Y ")
 
+@csrf_exempt
 def get_records(request, *args, **kwargs):
+    request_data = json.loads(request.body)
     daily_activities_dict = {}
     weekly_activities_dict = {}
     monthly_activities_dict = {}
-    date_entry = "2019,7,22"
-    y, m, d = map(int, date_entry.split(','))
-    custom_date = datetime(y, m, d)
+    custom_date_activities_dict = {}
+    # date_entry = "2019,7,22"
 
-    custom_date_activities = ActivityTracker.objects.filter(date=custom_date)
+    if "date" in request_data:
+        date = request_data["date"]
+        m, d, y = map(int, date.split(','))
+        custom_date = datetime(y, m, d)
+        custom_date_activities = ActivityTracker.objects.filter(date=custom_date)
+
+        for i, custom_date_activity in enumerate(custom_date_activities):
+            custom_date_activities_dict[i] = {
+                "date":custom_date_activity.date.strftime("%d %b %Y"),
+                "start_time":custom_date_activity.start_time.strftime("%H:%M"),
+                "end_time":custom_date_activity.end_time.strftime("%H:%M"),
+                "elapsed_time":custom_date_activity.elapsed_time,
+                "category_name":custom_date_activity.category_name,
+                "category_bar_color":custom_date_activity.category_bar_color,
+                "category_group_num":custom_date_activity.category_group_num
+                }
 
     daily_activities = ActivityTracker.objects.filter(date=today)
     weekly_activities = ActivityTracker.objects.filter(date__gte=datetime.date(week))
     monthly_activities = ActivityTracker.objects.filter(date__gte=datetime.date(month))
 
+    
     for i, daily_activity in enumerate(daily_activities):
         daily_activities_dict[i] = {
             "date":daily_activity.date.strftime("%d %b %Y"),
             "start_time":daily_activity.start_time.strftime("%H:%M"),
             "end_time":daily_activity.end_time.strftime("%H:%M"),
-            "activity":daily_activity.activity.name,
-            "elapsed_time":daily_activity.elapsed_time
+            "elapsed_time":daily_activity.elapsed_time,
+            "category_name":daily_activity.category_name,
+            "category_bar_color":daily_activity.category_bar_color,
+            "category_group_num":daily_activity.category_group_num
             }
         
     for i, weekly_activity in enumerate(weekly_activities):
@@ -42,8 +61,10 @@ def get_records(request, *args, **kwargs):
             "date":weekly_activity.date.strftime("%d %b %Y"),
             "start_time":weekly_activity.start_time.strftime("%H:%M"),
             "end_time":weekly_activity.end_time.strftime("%H:%M"),
-            "activity":weekly_activity.activity.name,
-            "elapsed_time":weekly_activity.elapsed_time
+            "elapsed_time":weekly_activity.elapsed_time,
+            "category_name":weekly_activity.category_name,
+            "category_bar_color":weekly_activity.category_bar_color,
+            "category_group_num":weekly_activity.category_group_num
 
             }
     
@@ -52,12 +73,14 @@ def get_records(request, *args, **kwargs):
             "date":monthly_activity.date.strftime("%d %b %Y"),
             "start_time":monthly_activity.start_time.strftime("%H:%M"),
             "end_time":monthly_activity.end_time.strftime("%H:%M"),
-            "activity":monthly_activity.activity.name,
-            "elapsed_time":monthly_activity.elapsed_time
+            "elapsed_time":monthly_activity.elapsed_time,
+            "category_name":monthly_activity.category_name,
+            "category_bar_color":monthly_activity.category_bar_color,
+            "category_group_num":monthly_activity.category_group_num
 
             }
 
-    return JsonResponse({"daily_dict":daily_activities_dict, "week_dict":weekly_activities_dict, "month_dict":monthly_activities_dict})
+    return JsonResponse({"custom_date_dict":custom_date_activities_dict,"daily_dict":daily_activities_dict, "week_dict":weekly_activities_dict, "month_dict":monthly_activities_dict})
 
 @csrf_exempt
 def add_record(request):
@@ -69,13 +92,23 @@ def add_record(request):
     end_time = request_data["end_time"]
     activity_id = request_data["activity"]
     elapsed_time = request_data["elapsed_time"]
+    category_name = request_data["category_name"]
+    category_bar_color = request_data["category_bar_color"]
+    category_group_num = request_data["category_group_num"]
 
     # date_entry = "2019,7,22"
-    y, m, d = map(int, date.split(','))
+    m, d, y = map(int, date.split(','))
     custom_date = datetime(y, m, d)
 
-    activity = Activity.objects.get(id = activity_id)
-    row = ActivityTracker(date=custom_date, start_time=start_time, end_time=end_time, activity=activity, elapsed_time=elapsed_time)
+    row = ActivityTracker(
+        date=custom_date,
+        start_time=start_time,
+        end_time=end_time,
+        elapsed_time=elapsed_time,
+        category_name=category_name,
+        category_bar_color=category_bar_color,
+        category_group_num=category_group_num
+        )
     row.save()
     return JsonResponse({"status":"True", "message":"Activity has been added."})
 
