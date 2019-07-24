@@ -19,7 +19,7 @@ from track.views import get_records, add_activity, add_category, category, edit_
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('get_activity', get_records),
+    path('get_activity/', get_records),
     path('activity/', add_activity),
     path('category/', add_category),
     path('get_category/', category),
