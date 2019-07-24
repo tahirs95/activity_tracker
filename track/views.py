@@ -83,14 +83,13 @@ def get_records(request, *args, **kwargs):
     return JsonResponse({"custom_date_dict":custom_date_activities_dict,"daily_dict":daily_activities_dict, "week_dict":weekly_activities_dict, "month_dict":monthly_activities_dict})
 
 @csrf_exempt
-def add_record(request):
+def add_activity(request):
     request_data = json.loads(request.body)
 
     # loading request data
     date = request_data["date"]
     start_time = request_data["start_time"]
     end_time = request_data["end_time"]
-    activity_id = request_data["activity"]
     elapsed_time = request_data["elapsed_time"]
     category_name = request_data["category_name"]
     category_bar_color = request_data["category_bar_color"]
@@ -111,4 +110,40 @@ def add_record(request):
         )
     row.save()
     return JsonResponse({"status":"True", "message":"Activity has been added."})
+
+
+
+@csrf_exempt
+def add_category(request):
+    request_data = json.loads(request.body)
+    # loading request data
+    name = request_data["name"]
+    bar_color = request_data["bar_color"]
+    group_num = request_data["group_num"]
+
+    row = Activity(
+        name=name,
+        bar_color=bar_color,
+        group_num=group_num
+    )
+    row.save()
+    return JsonResponse({"status":"True", "message":"Category has been added."})
+
+
+@csrf_exempt
+def category(request, *args, **kwargs):
+    categories_dict = {}
+    categories = Activity.objects.all()
+    for i, category in enumerate(categories):
+        categories_dict[i] = {
+            "name":category.name,
+            "bar_color":category.bar_color,
+            "group_num":category.group_num
+            }
+
+    return JsonResponse({"categories_dict":categories_dict})
+
+
+
+
 
