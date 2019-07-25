@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from track.views import get_records, add_activity, add_category, category, edit_category, delete_category
+from track.views import get_records, add_activity, add_category, category, edit_category, delete_category, custom_category
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +23,7 @@ urlpatterns = [
     path('activity/', add_activity),
     path('category/', add_category),
     path('get_category/', category),
+    path('custom_category/', custom_category),
     path('edit_category/', edit_category),
     path('delete_category/', delete_category)
 ]
