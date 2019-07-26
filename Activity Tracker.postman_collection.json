@@ -1,0 +1,151 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Activity Tracker",
+		"_postman_id": "13c8a819-b58c-1904-82a2-6c5009ad6154",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all activities",
+			"request": {
+				"url": "http://localhost:8000/get_activity/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"date\":\"7/24/2019\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get all categories",
+			"request": {
+				"url": "http://localhost:8000/get_category/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get custom category",
+			"request": {
+				"url": "http://localhost:8000/get_category/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Add Activity",
+			"request": {
+				"url": "http://localhost:8000/activity/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"date\":\"7/25/2019\",\n\t\"start_time\":\"07:10\",\n\t\"end_time\":\"08:50\",\n\t\"activity\":1,\n\t\"elapsed_time\":10.5,\n\t\"category_name\": \"Travelling\",\n\t\"category_bar_color\": \"purple\",\n\t\"category_group_num\":1\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Add Category",
+			"request": {
+				"url": "http://localhost:8000/category/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"Running\",\n\t\"bar_color\":\"green\",\n\t\"group_num\":\"2\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Category",
+			"request": {
+				"url": "http://localhost:8000/edit_category/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":1,\n\t\"name\":\"Haris\",\n\t\"bar_color\":\"green\",\n\t\"group_num\":\"2\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Category",
+			"request": {
+				"url": "http://localhost:8000/delete_category/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":1\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
