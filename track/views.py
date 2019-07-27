@@ -50,12 +50,14 @@ def get_records(request, *args, **kwargs):
     daily_activities = ActivityTracker.objects.filter(date=today)
     daily_elapsed= ActivityTracker.objects.filter(date=today).values('category_name').annotate(Sum('elapsed_time'))
     weekly_activities = ActivityTracker.objects.filter(date__gte=datetime.date(week))
+    weekly_categories = ActivityTracker.objects.filter(date__gte=datetime.date(week)).values('category_name','category_bar_color','category_group_num').distinct()
     weekly_elapsed = ActivityTracker.objects.filter(date__gte=datetime.date(week)).values('category_name').annotate(Sum('elapsed_time'))
     monthly_activities = ActivityTracker.objects.filter(date__gte=datetime.date(month))
     monthly_elapsed = ActivityTracker.objects.filter(date__gte=datetime.date(month)).values('category_name').annotate(Sum('elapsed_time'))
     tilldate_activities = ActivityTracker.objects.all()
     tilldate_elapsed = ActivityTracker.objects.all().values('category_name').annotate(Sum('elapsed_time'))
 
+    print(weekly_categories)
     for i, daily_activity in enumerate(daily_activities):
         daily_activities_dict[i] = {
             "date":daily_activity.date.strftime("%d %b %Y"),
@@ -69,9 +71,6 @@ def get_records(request, *args, **kwargs):
     
     for elapsed_time in daily_elapsed:
         daily_activities_dict[elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
-
-    
-
         
     for i, weekly_activity in enumerate(weekly_activities):
         weekly_activities_dict[i] = {
@@ -84,9 +83,20 @@ def get_records(request, *args, **kwargs):
             "category_group_num":weekly_activity.category_group_num
         }
     
+    weekly_activities_dict["total"] = {}
     for elapsed_time in weekly_elapsed:
-        weekly_activities_dict[elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
+        weekly_activities_dict["total"][elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
 
+    weekly_activities_dict["category"] = {}
+    for weekly_category in weekly_categories:
+        weekly_activities_dict["category"][weekly_category["category_name"]] = {
+            "category_bar_color":weekly_category["category_bar_color"],
+            "category_group_num":weekly_category["category_group_num"],
+            "total":weekly_activities_dict["total"][weekly_category["category_name"]]
+        }
+
+
+    
 
     for i, monthly_activity in enumerate(monthly_activities):
         monthly_activities_dict[i] = {
