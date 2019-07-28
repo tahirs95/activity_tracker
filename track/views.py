@@ -30,7 +30,7 @@ def get_records(request, *args, **kwargs):
         custom_date = datetime(y, m, d)
         custom_date_activities = ActivityTracker.objects.filter(date=custom_date)
         custom_date_elapsed = ActivityTracker.objects.filter(date=custom_date).values('category_name').annotate(Sum('elapsed_time'))
-
+        custom_date_categories = ActivityTracker.objects.filter(date=custom_date).values('category_name','category_bar_color','category_group_num').distinct()
 
         for i, custom_date_activity in enumerate(custom_date_activities):
             custom_date_activities_dict[i] = {
@@ -41,23 +41,36 @@ def get_records(request, *args, **kwargs):
                 "category_name":custom_date_activity.category_name,
                 "category_bar_color":custom_date_activity.category_bar_color,
                 "category_group_num":custom_date_activity.category_group_num
-            }
+        }
     
+        custom_date_activities_dict["total"] = {}
         for elapsed_time in custom_date_elapsed:
-            custom_date_activities_dict[elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
+            custom_date_activities_dict["total"][elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
 
+        custom_date_activities_dict["category"] = {}
+        for custom_date_category in custom_date_categories:
+            custom_date_activities_dict["category"][custom_date_category["category_name"]] = {
+                "category_bar_color":custom_date_category["category_bar_color"],
+                "category_group_num":custom_date_category["category_group_num"],
+                "total":custom_date_activities_dict["total"][custom_date_category["category_name"]]
+            }
 
     daily_activities = ActivityTracker.objects.filter(date=today)
+    daily_categories = ActivityTracker.objects.filter(date=today).values('category_name','category_bar_color','category_group_num').distinct()
     daily_elapsed= ActivityTracker.objects.filter(date=today).values('category_name').annotate(Sum('elapsed_time'))
+
     weekly_activities = ActivityTracker.objects.filter(date__gte=datetime.date(week))
     weekly_categories = ActivityTracker.objects.filter(date__gte=datetime.date(week)).values('category_name','category_bar_color','category_group_num').distinct()
     weekly_elapsed = ActivityTracker.objects.filter(date__gte=datetime.date(week)).values('category_name').annotate(Sum('elapsed_time'))
+
     monthly_activities = ActivityTracker.objects.filter(date__gte=datetime.date(month))
     monthly_elapsed = ActivityTracker.objects.filter(date__gte=datetime.date(month)).values('category_name').annotate(Sum('elapsed_time'))
+    monthly_categories = ActivityTracker.objects.filter(date__gte=datetime.date(month)).values('category_name','category_bar_color','category_group_num').distinct()
+
     tilldate_activities = ActivityTracker.objects.all()
     tilldate_elapsed = ActivityTracker.objects.all().values('category_name').annotate(Sum('elapsed_time'))
+    tilldate_categories = ActivityTracker.objects.all().values('category_name','category_bar_color','category_group_num').distinct()
 
-    print(weekly_categories)
     for i, daily_activity in enumerate(daily_activities):
         daily_activities_dict[i] = {
             "date":daily_activity.date.strftime("%d %b %Y"),
@@ -67,11 +80,20 @@ def get_records(request, *args, **kwargs):
             "category_name":daily_activity.category_name,
             "category_bar_color":daily_activity.category_bar_color,
             "category_group_num":daily_activity.category_group_num
-        }
-    
+    }
+
+    daily_activities_dict["total"] = {}
     for elapsed_time in daily_elapsed:
-        daily_activities_dict[elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
-        
+        daily_activities_dict["total"][elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
+
+    daily_activities_dict["category"] = {}
+    for daily_category in daily_categories:
+        daily_activities_dict["category"][daily_category["category_name"]] = {
+            "category_bar_color":daily_category["category_bar_color"],
+            "category_group_num":daily_category["category_group_num"],
+            "total":daily_activities_dict["total"][daily_category["category_name"]]
+        }
+     
     for i, weekly_activity in enumerate(weekly_activities):
         weekly_activities_dict[i] = {
             "date":weekly_activity.date.strftime("%d %b %Y"),
@@ -95,9 +117,6 @@ def get_records(request, *args, **kwargs):
             "total":weekly_activities_dict["total"][weekly_category["category_name"]]
         }
 
-
-    
-
     for i, monthly_activity in enumerate(monthly_activities):
         monthly_activities_dict[i] = {
             "date":monthly_activity.date.strftime("%d %b %Y"),
@@ -109,9 +128,17 @@ def get_records(request, *args, **kwargs):
             "category_group_num":monthly_activity.category_group_num
         }
     
+    monthly_activities_dict["total"] = {}
     for elapsed_time in monthly_elapsed:
-        monthly_activities_dict[elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
+        monthly_activities_dict["total"][elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
 
+    monthly_activities_dict["category"] = {}
+    for monthly_category in monthly_categories:
+        monthly_activities_dict["category"][monthly_category["category_name"]] = {
+            "category_bar_color":monthly_category["category_bar_color"],
+            "category_group_num":monthly_category["category_group_num"],
+            "total":monthly_activities_dict["total"][monthly_category["category_name"]]
+        }
     
     for i, tilldate_activity in enumerate(tilldate_activities):
         tilldate_activities_dict[i] = {
@@ -124,10 +151,18 @@ def get_records(request, *args, **kwargs):
             "category_group_num":tilldate_activity.category_group_num
         }
     
-
+    tilldate_activities_dict["total"] = {}
     for elapsed_time in tilldate_elapsed:
-        tilldate_activities_dict[elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
+        tilldate_activities_dict["total"][elapsed_time["category_name"]] = elapsed_time["elapsed_time__sum"]
 
+    tilldate_activities_dict["category"] = {}
+    for tilldate_category in tilldate_categories:
+        tilldate_activities_dict["category"][tilldate_category["category_name"]] = {
+            "category_bar_color":tilldate_category["category_bar_color"],
+            "category_group_num":tilldate_category["category_group_num"],
+            "total":tilldate_activities_dict["total"][tilldate_category["category_name"]]
+        }
+    
     return JsonResponse({
         "custom_date_dict":custom_date_activities_dict,
         "daily_dict":daily_activities_dict,
@@ -225,6 +260,18 @@ def edit_category(request):
     name = request_data["name"]
     bar_color = request_data["bar_color"]
     group_num = request_data["group_num"]
+
+    if bar_color:
+        activities = ActivityTracker.objects.filter(category_name__iexact=name)
+        for a in activities:
+            a.category_bar_color = bar_color
+            a.save()
+    
+    if group_num:
+        activities = ActivityTracker.objects.filter(category_name__iexact=name)
+        for a in activities:
+            a.category_group_num = group_num
+            a.save()
 
     activity = Activity.objects.get(pk=_id)
     activity.name = name
