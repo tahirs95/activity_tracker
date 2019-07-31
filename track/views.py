@@ -39,6 +39,7 @@ def get_records(request, *args, **kwargs):
         
         for i, custom_date_activity in enumerate(custom_date_activities):
             custom_date_activities_dict[i] = {
+                "id":custom_date_activity.id,
                 "date":custom_date_activity.date.strftime("%d %b %Y"),
                 "start_time":custom_date_activity.start_time.strftime("%H:%M"),
                 "end_time":custom_date_activity.end_time.strftime("%H:%M"),
@@ -73,6 +74,7 @@ def get_records(request, *args, **kwargs):
 
         for i, custom_week_activity in enumerate(custom_week_activities):
             custom_week_activities_dict[i] = {
+                "id":custom_week_activity.id,
                 "date":custom_week_activity.date.strftime("%d %b %Y"),
                 "start_time":custom_week_activity.start_time.strftime("%H:%M"),
                 "end_time":custom_week_activity.end_time.strftime("%H:%M"),
@@ -128,6 +130,7 @@ def get_records(request, *args, **kwargs):
 
     for i, daily_activity in enumerate(daily_activities):
         daily_activities_dict[i] = {
+            "id":daily_activity.id,
             "date":daily_activity.date.strftime("%d %b %Y"),
             "start_time":daily_activity.start_time.strftime("%H:%M"),
             "end_time":daily_activity.end_time.strftime("%H:%M"),
@@ -156,6 +159,7 @@ def get_records(request, *args, **kwargs):
      
     for i, weekly_activity in enumerate(weekly_activities):
         weekly_activities_dict[i] = {
+            "id":weekly_activity.id,
             "date":weekly_activity.date.strftime("%d %b %Y"),
             "start_time":weekly_activity.start_time.strftime("%H:%M"),
             "end_time":weekly_activity.end_time.strftime("%H:%M"),
@@ -184,6 +188,7 @@ def get_records(request, *args, **kwargs):
     if "date" in request_data:
         for i, monthnum_activity in enumerate(monthnum_activities):
             monthnum_activities_dict[i] = {
+                "id":monthnum_activity.id,
                 "date":monthnum_activity.date.strftime("%d %b %Y"),
                 "start_time":monthnum_activity.start_time.strftime("%H:%M"),
                 "end_time":monthnum_activity.end_time.strftime("%H:%M"),
@@ -212,6 +217,7 @@ def get_records(request, *args, **kwargs):
 
     for i, monthly_activity in enumerate(monthly_activities):
             monthly_activities_dict[i] = {
+                "id":monthly_activity.id,
                 "date":monthly_activity.date.strftime("%d %b %Y"),
                 "start_time":monthly_activity.start_time.strftime("%H:%M"),
                 "end_time":monthly_activity.end_time.strftime("%H:%M"),
@@ -240,6 +246,7 @@ def get_records(request, *args, **kwargs):
     
     for i, tilldate_activity in enumerate(tilldate_activities):
         tilldate_activities_dict[i] = {
+            "id":tilldate_activity.id,
             "date":tilldate_activity.date.strftime("%d %b %Y"),
             "start_time":tilldate_activity.start_time.strftime("%H:%M"),
             "end_time":tilldate_activity.end_time.strftime("%H:%M"),
@@ -388,13 +395,22 @@ def edit_category(request):
 @csrf_exempt
 def delete_category(request):
     request_data = json.loads(request.body)
+
     # loading request data
     _id = request_data["id"]
-
     activity = Activity.objects.get(pk=_id)
     activity.delete()
-
     return JsonResponse({"status":"True", "message":"Category has been deleted."})
+
+@csrf_exempt
+def delete_activity(request):
+    request_data = json.loads(request.body)
+    
+    # loading request data
+    _id = request_data["id"]
+    activity = ActivityTracker.objects.get(pk=_id)
+    activity.delete()
+    return JsonResponse({"status":"True", "message":"Activity has been deleted."})
 
 
 
