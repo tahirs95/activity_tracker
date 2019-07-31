@@ -61,8 +61,9 @@ def get_records(request, *args, **kwargs):
                 "total":custom_date_activities_dict["total"][custom_date_category["category_name"]]
             }
         
+        custom_date_activities_dict["groups"] = {}
         for elapsed_time in custom_date_gnum_elapsed:
-            custom_date_activities_dict["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
+            custom_date_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
 
         start_week = custom_date - timedelta(custom_date.weekday())
         # end_week = start_week + timedelta(6)
@@ -95,9 +96,10 @@ def get_records(request, *args, **kwargs):
                 "category_group_num":custom_week_category["category_group_num"],
                 "total":custom_week_activities_dict["total"][custom_week_category["category_name"]]
             }
-        
+
+        custom_week_activities_dict["groups"] = {}
         for elapsed_time in custom_week_gnum_elapsed:
-            custom_week_activities_dict["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
+            custom_week_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
 
 
 
@@ -152,8 +154,9 @@ def get_records(request, *args, **kwargs):
             "total":daily_activities_dict["total"][daily_category["category_name"]]
         }
     
+    daily_activities_dict["groups"] = {}
     for elapsed_time in daily_gnum_elapsed:
-        daily_activities_dict["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
+        daily_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
 
 # --------------------------Weekly--------------------------------------
      
@@ -181,8 +184,9 @@ def get_records(request, *args, **kwargs):
             "total":weekly_activities_dict["total"][weekly_category["category_name"]]
         }
     
+    weekly_activities_dict["groups"] = {}
     for elapsed_time in weekly_gnum_elapsed:
-        weekly_activities_dict["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
+        weekly_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
 
 # --------------------------Monthly Num--------------------------------------
     if "date" in request_data:
@@ -210,8 +214,9 @@ def get_records(request, *args, **kwargs):
                 "total":monthnum_activities_dict["total"][monthnum_category["category_name"]]
             }
         
+        monthnum_activities_dict["groups"] = {}
         for elapsed_time in monthnum_gnum_elapsed:
-            monthnum_activities_dict["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
+            monthnum_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
 
 # --------------------------Monthly--------------------------------------
 
@@ -239,8 +244,9 @@ def get_records(request, *args, **kwargs):
             "total":monthly_activities_dict["total"][monthly_category["category_name"]]
         }
 
+    monthly_activities_dict["groups"] = {}
     for elapsed_time in monthly_gnum_elapsed:
-        monthly_activities_dict["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
+        monthly_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
 
 # --------------------------Till Date--------------------------------------
     
@@ -268,8 +274,9 @@ def get_records(request, *args, **kwargs):
             "total":tilldate_activities_dict["total"][tilldate_category["category_name"]]
         }
     
+    tilldate_activities_dict["groups"] = {}
     for elapsed_time in tilldate_gnum_elapsed:
-        tilldate_activities_dict["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
+        tilldate_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
 
     
     return JsonResponse({
@@ -405,7 +412,7 @@ def delete_category(request):
 @csrf_exempt
 def delete_activity(request):
     request_data = json.loads(request.body)
-    
+
     # loading request data
     _id = request_data["id"]
     activity = ActivityTracker.objects.get(pk=_id)
