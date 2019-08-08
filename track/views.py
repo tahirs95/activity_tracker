@@ -349,7 +349,6 @@ def category(request, *args, **kwargs):
             "bar_color":category.bar_color,
             "group_num":category.group_num
             }
-
     return JsonResponse({"categories_dict":categories_dict})
 
 
@@ -379,6 +378,7 @@ def edit_category(request):
     name = request_data["name"]
     bar_color = request_data["bar_color"]
     group_num = request_data["group_num"]
+    rank = request_data["rank"]
 
     if bar_color:
         activities = ActivityTracker.objects.filter(category_name__iexact=name)
@@ -396,6 +396,7 @@ def edit_category(request):
     activity.name = name
     activity.bar_color = bar_color
     activity.group_num = group_num
+    activity.rank = rank
     activity.save()
 
     return JsonResponse({"status":"True", "message":"Category has been edited."})
