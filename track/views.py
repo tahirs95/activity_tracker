@@ -9,8 +9,10 @@ from .models import ActivityTracker, Activity
 import json
 from datetime import timedelta, datetime, date
 from django.db.models import Sum
+from django.db.models import Q
 
 today = date.today()
+yesterday = today - timedelta(days=1)
 
 # dateStr = today.strftime("%d %b %Y ")
 
@@ -100,9 +102,7 @@ def get_records(request, *args, **kwargs):
 
         custom_week_activities_dict["groups"] = {}
         for elapsed_time in custom_week_gnum_elapsed:
-            custom_week_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"]
-
-
+            custom_week_activities_dict["groups"]["Group " + str(elapsed_time["category_group_num"])] = elapsed_time["elapsed_time__sum"] 
 
     daily_activities = ActivityTracker.objects.filter(date=today)
     daily_categories = ActivityTracker.objects.filter(date=today).values('category_name','category_bar_color','category_group_num').distinct()
@@ -303,6 +303,7 @@ def add_activity(request):
     category_bar_color = request_data["category_bar_color"]
     category_group_num = request_data["category_group_num"]
 
+
     # date_entry = "2019,7,22"
     m, d, y = map(int, date.split('/'))
     custom_date = datetime(y, m, d)
@@ -319,8 +320,6 @@ def add_activity(request):
     row.save()
     return JsonResponse({"status":"True", "message":"Activity has been added."})
 
-
-
 @csrf_exempt
 def add_category(request):
     request_data = json.loads(request.body)
@@ -328,11 +327,13 @@ def add_category(request):
     name = request_data["name"]
     bar_color = request_data["bar_color"]
     group_num = request_data["group_num"]
+    rank = request_data["rank"]
 
     row = Activity(
         name=name,
         bar_color=bar_color,
-        group_num=group_num
+        group_num=group_num,
+        rank=rank
     )
     row.save()
     return JsonResponse({"status":"True", "message":"Category has been added."})
