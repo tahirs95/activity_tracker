@@ -347,7 +347,8 @@ def category(request, *args, **kwargs):
             "id":category.id,
             "name":category.name,
             "bar_color":category.bar_color,
-            "group_num":category.group_num
+            "group_num":category.group_num,
+            "rank":category.rank
             }
     return JsonResponse({"categories_dict":categories_dict})
 
@@ -364,7 +365,8 @@ def custom_category(request, *args, **kwargs):
             "id":category.id,
             "name":category.name,
             "bar_color":category.bar_color,
-            "group_num":category.group_num
+            "group_num":category.group_num,
+            "rank":category.rank
             }
 
     return JsonResponse({"categories_dict":categories_dict})
