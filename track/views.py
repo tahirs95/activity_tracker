@@ -341,7 +341,7 @@ def add_category(request):
 @csrf_exempt
 def category(request, *args, **kwargs):
     categories_dict = {}
-    categories = Activity.objects.all()
+    categories = Activity.objects.all().order_by('rank')
     for i, category in enumerate(categories):
         categories_dict[i] = {
             "id":category.id,
@@ -359,7 +359,7 @@ def custom_category(request, *args, **kwargs):
 
     category_name = request_data["name"]
     categories_dict = {}
-    categories = Activity.objects.filter(name__iexact=category_name)
+    categories = Activity.objects.filter(name__iexact=category_name).order_by('rank')
     for i, category in enumerate(categories):
         categories_dict[i] = {
             "id":category.id,
